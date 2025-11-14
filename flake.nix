@@ -6,6 +6,6 @@
   outputs = { flakelight, ... }@inputs:
     flakelight ./. {
       inherit inputs;
-      devShell.packages = pkgs: with pkgs; [ hello ];
+      devShell.packages = pkgs: with pkgs; [ slidev ];
     };
 }
