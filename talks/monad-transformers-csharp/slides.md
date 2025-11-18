@@ -62,7 +62,7 @@ interface IMonad<T>
 }
 ```
 ```csharp
-interface IMonad<TMonad, T> where TMonad : IMonad<TMonad, T>
+interface IMonad<TMonad, T>
 {
   static abstract TMonad<T> Return(T value);
 
@@ -87,9 +87,25 @@ static TMonad<Lst<TOut>> BindT<TMonad, T, TOut>(
 
 # Ziel
 
+<v-clicks depth="2">
+
+- Wir wollen ohne großen Aufwand in der Lage sein, Monadentransformer zu definieren.
+- Die Monadentransformer sollen auf alle Monaden anwendbar sein.
+  - Das heißt auch, zur Design-Time unbekannte Monaden.
+- Monaden sollen mehrfach hintereinander transformiert werden können.
+
+</v-clicks>
+
 ---
 
 # C#'s Grenzen
+
+<v-clicks>
+
+- C# unterstützt keine arbiträren Nested Generics bzw. Type Constructors.
+- Typ-Inferenz ist nur auf direkte Typ-Assoziationen beschränkt.
+
+</v-clicks>
 
 ---
 
@@ -97,4 +113,22 @@ static TMonad<Lst<TOut>> BindT<TMonad, T, TOut>(
 
 ---
 
+# Demo
+
+---
+
 # Zukunft
+
+---
+layout: image-left
+image: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.PAq1g9lE92gIeyZmVLa6jgHaHY%3Fpid%3DApi&f=1&ipt=86cc5a28be669acc3bfc7584275add48e621043bb52611de106f31c00f5a0bf2&ipo=images
+---
+
+- https://github.com/bluehands/Funicular-Switch
+
+---
+layout: center
+---
+
+thx
+
