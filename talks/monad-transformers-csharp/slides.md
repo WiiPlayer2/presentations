@@ -17,8 +17,9 @@ mdc: true
 
 ---
 
-# Motivation
-## Monaden
+# Motivation - Monaden
+
+<v-clicks>
 
 ```csharp
 record Monad<T>(...);
@@ -31,10 +32,11 @@ record Monad<T>(...);
 
 \+ 3 Gesetze (https://wiki.haskell.org/Monad_laws)
 
+</v-clicks>
+
 ---
 
-# Motivation
-## Monaden
+# Motivation - Monaden
 
 ```csharp
 record Lst<T>(IReadOnlyList<T> Items)
@@ -49,8 +51,9 @@ record Lst<T>(IReadOnlyList<T> Items)
 
 ---
 
-# Motivation
-## Higher Order Generics
+# Motivation - Higher Order Generics
+
+<v-click>
 
 ````md magic-move
 ```csharp
@@ -71,10 +74,13 @@ interface IMonad<TMonad, T>
 ```
 ````
 
+</v-click>
+
 ---
 
-# Motivation
-## Monadentransformer
+# Motivation - Monadentransformer
+
+<v-click>
 
 ```csharp
 static TMonad<Lst<TOut>> BindT<TMonad, T, TOut>(
@@ -82,6 +88,8 @@ static TMonad<Lst<TOut>> BindT<TMonad, T, TOut>(
   Func<T, TMonad<Lst<T>>> fn
 ) => ...
 ```
+
+</v-click>
 
 ---
 
@@ -109,15 +117,128 @@ static TMonad<Lst<TOut>> BindT<TMonad, T, TOut>(
 
 ---
 
-# Implementierung
+# Umsetzung
 
+<v-click>
+
+````md magic-move
+```csharp
+record Lst<T>(IReadOnlyList<T> Items)
+{
+  public static Lst<T> Return(T value) => ...;
+
+  public Lst<TOut> Bind<TOut>(Func<T, Lst<TOut>> fn) => ...;
+}
+```
+```csharp
+record Lst<T>(IReadOnlyList<T> Items);
+
+record Id<T>(T Value)
+{
+  public static Id<T> Return(T value) => new(value);
+
+  public Id<TOut> Bind<TOut>(Func<T, Id<TOut>> fn) => new(fn(Value));
+}
+```
+```csharp
+record Lst<T>(IReadOnlyList<T> Items);
+record Id<T>(T Value);
+
+static class LstT
+{
+  public static Id<Lst<TOut>> Bind<T, TOut>(
+    this Id<Lst<T>> ma,
+    Func<T, Id<Lst<TOut>>> fn
+  ) =>
+    new(ma.Value.Bind(x => fn(x).Value));
+}
+```
+```csharp
+record Lst<T>(IReadOnlyList<T> Items);
+record Id<T>(T Value);
+
+static class LstT
+{
+  public static Id<Lst<TOut>> Bind<T, TOut>(
+    this Id<Lst<T>> ma,
+    Func<T, Id<Lst<TOut>>> fn
+  ) =>
+    ma.Bind(xs => xs.Value.Aggregate(
+      Id<Lst<TOut>>.Return(new([])),
+      (acc, cur) => acc
+          .Bind(ys => fn(cur)
+          .Map(ys_ => new Lst<TOut>([..ys.Value, ..ys_.Value])))
+    ));
+}
+```
+```csharp
+record Lst<T>(IReadOnlyList<T> Items);
+record Id<T>(T Value);
+
+static class LstT
+{
+  public static IMonad<Lst<TOut>> Bind<T, TOut>(
+    this IMonad<Lst<T>> ma,
+    Func<T, Id<IMonad<TOut>>> fn
+  ) =>
+    ma.Bind(xs => xs.Value.Aggregate(
+      ma.Return(new([])),
+      (acc, cur) => acc
+          .Bind(ys => fn(cur)
+          .Map(ys_ => new Lst<TOut>([..ys.Value, ..ys_.Value])))
+    ));
+}
+```
+```csharp
+record Lst<T>(IReadOnlyList<T> Items);
+record Id<T>(T Value);
+
+[MonadTransformer(typeof(Lst<>))]
+static class LstT
+{
+  public static IMonad<Lst<TOut>> Bind<T, TOut>(
+    this IMonad<Lst<T>> ma,
+    Func<T, Id<IMonad<TOut>>> fn
+  ) =>
+    ma.Bind(xs => xs.Value.Aggregate(
+      ma.Return(new([])),
+      (acc, cur) => acc
+          .Bind(ys => fn(cur)
+          .Map(ys_ => new Lst<TOut>([..ys.Value, ..ys_.Value])))
+    ));
+}
+```
+```csharp
+record Lst<T>(IReadOnlyList<T> Items);
+record Id<T>(T Value);
+
+[MonadTransformer(typeof(Lst<>))]
+static class LstT;
+
+[Transform(typeof(Id<>), typeof(Lst))]
+partial static class IdLst;
+```
+````
+
+</v-click>
+
+---
+layout: section
 ---
 
 # Demo
 
 ---
 
-# Zukunft
+# Zukunft und Wünsche
+
+<v-clicks>
+
+- Eine Bibliothek mit der man domänenunabhängige Higher Order Generics erstellen und benutzen kann
+- Das Typ-System von C# könnte mehr, but doesn't. 🤷
+- Ich wünsche mir First-Class-Support von Higher Order Generics in C#
+
+</v-clicks>
 
 ---
 layout: image-left

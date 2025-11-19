@@ -1,0 +1,8 @@
+:root {
+    --slidev-code-font-size: 18px;
+    --slidev-code-line-height: var(--slidev-code-font-size) * 1.5;
+}
+
+.slidev-layout {
+    --uno: text-[1.5rem];
+}
