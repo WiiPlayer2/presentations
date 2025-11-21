@@ -37,9 +37,7 @@ class: text-middle
 
 # Motivation - Monaden
 
-<v-clicks>
-
-```csharp
+```csharp {hide|1|3|5|all}
 record Monad<T>(...);
 {
   public static Monad<T> Return(T value) => ...;
@@ -47,16 +45,31 @@ record Monad<T>(...);
   public Monad<TOut> Bind<TOut>(Func<T, Monad<TOut>> fn) => ...;
 }
 ```
+<v-after>
 
 \+ 3 Gesetze (https://wiki.haskell.org/Monad_laws)
 
-</v-clicks>
+</v-after>
+
+<!--
+[click:4]
+Monad Laws:
+- Left Identity
+  - `return a >>= h == h a`
+  - `Monad<T>.Return(a).Bind(h) == h(a)`
+- Right Identity
+  - `m >>= return == m`
+  - `m.Bind(Monad<T>.Return) == m`
+- Associativity
+  - `(m >>= g) >>= h == m >>= (\x -> g x >>= h)`
+  - `m.Bind(g).Bind(h) == m.Bind(x => g(x).Bind(h))`
+-->
 
 ---
 
 # Motivation - Monaden
 
-```csharp
+```csharp {hide|1|3-4|6-7|all}
 record Lst<T>(IReadOnlyList<T> Items)
 {
   public static Lst<T> Return(T value) =>
@@ -98,16 +111,12 @@ interface IMonad<TMonad, T>
 
 # Motivation - Monadentransformer
 
-<v-click>
-
-```csharp
+```csharp {hide|all}
 static TMonad<Lst<TOut>> BindT<TMonad, T, TOut>(
   TMonad<Lst<T>> ma,
-  Func<T, TMonad<Lst<T>>> fn
+  Func<T, TMonad<Lst<TOut>>> fn
 ) => ...
 ```
-
-</v-click>
 
 ---
 
@@ -149,7 +158,7 @@ record Lst<T>(IReadOnlyList<T> Items)
 }
 ```
 ```csharp
-record Lst<T>(IReadOnlyList<T> Items);
+record Lst<T>;
 
 record Id<T>(T Value)
 {
@@ -159,12 +168,12 @@ record Id<T>(T Value)
 }
 ```
 ```csharp
-record Lst<T>(IReadOnlyList<T> Items);
-record Id<T>(T Value);
+record Lst<T>;
+record Id<T>;
 
 static class LstT
 {
-  public static Id<Lst<TOut>> Bind<T, TOut>(
+  public static Id<Lst<TOut>> BindT<T, TOut>(
     this Id<Lst<T>> ma,
     Func<T, Id<Lst<TOut>>> fn
   ) =>
@@ -172,12 +181,12 @@ static class LstT
 }
 ```
 ```csharp
-record Lst<T>(IReadOnlyList<T> Items);
-record Id<T>(T Value);
+record Lst<T>;
+record Id<T>;
 
 static class LstT
 {
-  public static Id<Lst<TOut>> Bind<T, TOut>(
+  public static Id<Lst<TOut>> BindT<T, TOut>(
     this Id<Lst<T>> ma,
     Func<T, Id<Lst<TOut>>> fn
   ) =>
@@ -190,12 +199,12 @@ static class LstT
 }
 ```
 ```csharp
-record Lst<T>(IReadOnlyList<T> Items);
-record Id<T>(T Value);
+record Lst<T>;
+record Id<T>;
 
 static class LstT
 {
-  public static IMonad<Lst<TOut>> Bind<T, TOut>(
+  public static IMonad<Lst<TOut>> BindT<T, TOut>(
     this IMonad<Lst<T>> ma,
     Func<T, Id<IMonad<TOut>>> fn
   ) =>
@@ -208,13 +217,13 @@ static class LstT
 }
 ```
 ```csharp
-record Lst<T>(IReadOnlyList<T> Items);
-record Id<T>(T Value);
+record Lst<T>;
+record Id<T>;
 
 [MonadTransformer(typeof(Lst<>))]
 static class LstT
 {
-  public static IMonad<Lst<TOut>> Bind<T, TOut>(
+  public static IMonad<Lst<TOut>> BindT<T, TOut>(
     this IMonad<Lst<T>> ma,
     Func<T, Id<IMonad<TOut>>> fn
   ) =>
@@ -227,18 +236,28 @@ static class LstT
 }
 ```
 ```csharp
-record Lst<T>(IReadOnlyList<T> Items);
-record Id<T>(T Value);
+record Lst<T>;
+record Id<T>;
 
 [MonadTransformer(typeof(Lst<>))]
 static class LstT;
 
-[Transform(typeof(Id<>), typeof(Lst))]
+[TransformMonad(typeof(Id<>), typeof(LstT))]
 partial static class IdLst;
 ```
 ````
 
 </v-click>
+
+<!--
+- [click] Lst Monad
+- [click] Id Monad
+- [click] Fixed IdLst Bind
+- [click] Using Id's monad functions
+- [click] Replacing Id with interface
+- [click] Attaching source generator attribute
+- [click] Defined transformed monad
+-->
 
 ---
 layout: section
