@@ -12,8 +12,26 @@ mdc: true
 Über Monaden, Higher Order Generics und die Grenzen des C#-Typsystems
 
 ---
+layout: image-right
+image: ./me.jpg
+class: text-middle
+---
 
 # Wer bin ich?
+
+<v-clicks depth="2">
+
+- Waldemar Tomme
+- Softwareentwickler:in
+  - [bluehands GmbH & Co.mmunication KG](https://bluehands.de)
+- Skills & Interessen:
+  - .NET / C#
+  - DevOps
+  - Kubernetes / Container
+  - Nix
+  - Reverse Engineering
+
+</v-clicks>
 
 ---
 

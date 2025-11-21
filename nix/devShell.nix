@@ -20,7 +20,7 @@ let
       ];
       text = ''
         cd "$FLAKE_ROOT/talks/${talk}"
-        slidev --remote --open
+        slidev --remote
       '';
     };
 
