@@ -190,11 +190,11 @@ static class LstT
     this Id<Lst<T>> ma,
     Func<T, Id<Lst<TOut>>> fn
   ) =>
-    ma.Bind(xs => xs.Value.Aggregate(
+    ma.Bind(xs => xs.Items.Aggregate(
       Id<Lst<TOut>>.Return(new([])),
       (acc, cur) => acc
-          .Bind(ys => fn(cur)
-          .Map(ys_ => new Lst<TOut>([..ys.Value, ..ys_.Value])))
+        .Bind(ys => fn(cur)
+          .Map(ys_ => new Lst<TOut>([..ys.Items, ..ys_.Items])))
     ));
 }
 ```
@@ -206,13 +206,13 @@ static class LstT
 {
   public static IMonad<Lst<TOut>> BindT<T, TOut>(
     this IMonad<Lst<T>> ma,
-    Func<T, Id<IMonad<TOut>>> fn
+    Func<T, IMonad<Lst<TOut>>> fn
   ) =>
-    ma.Bind(xs => xs.Value.Aggregate(
-      ma.Return(new([])),
+    ma.Bind(xs => xs.Items.Aggregate(
+      ma.Return<Lst<TOut>>(new([])),
       (acc, cur) => acc
-          .Bind(ys => fn(cur)
-          .Map(ys_ => new Lst<TOut>([..ys.Value, ..ys_.Value])))
+        .Bind(ys => fn(cur)
+          .Map(ys_ => new Lst<TOut>([..ys.Items, ..ys_.Items])))
     ));
 }
 ```
@@ -225,13 +225,13 @@ static class LstT
 {
   public static IMonad<Lst<TOut>> BindT<T, TOut>(
     this IMonad<Lst<T>> ma,
-    Func<T, Id<IMonad<TOut>>> fn
+    Func<T, IMonad<Lst<TOut>>> fn
   ) =>
-    ma.Bind(xs => xs.Value.Aggregate(
-      ma.Return(new([])),
+    ma.Bind(xs => xs.Items.Aggregate(
+      ma.Return<Lst<TOut>>(new([])),
       (acc, cur) => acc
-          .Bind(ys => fn(cur)
-          .Map(ys_ => new Lst<TOut>([..ys.Value, ..ys_.Value])))
+        .Bind(ys => fn(cur)
+          .Map(ys_ => new Lst<TOut>([..ys.Items, ..ys_.Items])))
     ));
 }
 ```
@@ -243,7 +243,7 @@ record Id<T>;
 static class LstT;
 
 [TransformMonad(typeof(Id<>), typeof(LstT))]
-partial static class IdLst;
+static partial class IdLst;
 ```
 ````
 
