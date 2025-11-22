@@ -200,7 +200,7 @@ static class LstT
 ```
 ```csharp
 record Lst<T>;
-record Id<T>;
+record Id<T> : IMonad<T>;
 
 static class LstT
 {
@@ -216,28 +216,32 @@ static class LstT
     ));
 }
 ```
-```csharp
+```csharp {all|7-11|13-14}
 record Lst<T>;
-record Id<T>;
+record Id<T> : IMonad<T>;
+static class LstT;
 
-[MonadTransformer(typeof(Lst<>))]
-static class LstT
+static partial class IdLst
 {
-  public static IMonad<Lst<TOut>> BindT<T, TOut>(
-    this IMonad<Lst<T>> ma,
-    Func<T, IMonad<Lst<TOut>>> fn
+  public static Id<Lst<TOut>> Bind<T, TOut>(
+    this Id<Lst<T>> ma,
+    Func<T, Id<Lst<TOut>>> fn
   ) =>
-    ma.Bind(xs => xs.Items.Aggregate(
-      ma.Return<Lst<TOut>>(new([])),
-      (acc, cur) => acc
-        .Bind(ys => fn(cur)
-          .Map(ys_ => new Lst<TOut>([..ys.Items, ..ys_.Items])))
-    ));
+    (Id<Lst<TOut>>)ma.BindT(a => fn(a));
+
+  public static Id<Lst<T>> Return<T>(T value) =>
+    Id<Lst<T>>.Return(Lst<T>.Return(value));
 }
 ```
 ```csharp
 record Lst<T>;
-record Id<T>;
+record Id<T> : IMonad<T>;
+static class LstT;
+static partial class IdLst;
+```
+```csharp
+record Lst<T>;
+record Id<T> : IMonad<T>;
 
 [MonadTransformer(typeof(Lst<>))]
 static class LstT;
@@ -255,8 +259,8 @@ static partial class IdLst;
 - [click] Fixed IdLst Bind
 - [click] Using Id's monad functions
 - [click] Replacing Id with interface
-- [click] Attaching source generator attribute
-- [click] Defined transformed monad
+- [click] Concrete implementation for IdLst
+- [click:2] Attach attributes
 -->
 
 ---

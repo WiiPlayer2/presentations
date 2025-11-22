@@ -1,5 +1,5 @@
 :root {
-    --slidev-code-font-size: 18px;
+    --slidev-code-font-size: 18px; /* 12px * 1.5 */
     --slidev-code-line-height: var(--slidev-code-font-size) * 1.5;
 }
 
