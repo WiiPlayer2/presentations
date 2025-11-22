@@ -11,6 +11,10 @@ mdc: true
 
 Über Monaden, Higher Order Generics und die Grenzen des C#-Typsystems
 
+<!--
+# ALLOW QUESTIONS DURING PRESENTATIONS
+-->
+
 ---
 layout: image-right
 image: ./me.jpg
